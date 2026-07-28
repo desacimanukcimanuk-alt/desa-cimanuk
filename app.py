@@ -3,7 +3,15 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import mysql.connector
-from config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, SECRET_KEY, UPLOAD_FOLDER
+from config import (
+    DB_HOST,
+    DB_USER,
+    DB_PASSWORD,
+    DB_NAME,
+    DB_PORT,
+    SECRET_KEY,
+    UPLOAD_FOLDER
+)
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
