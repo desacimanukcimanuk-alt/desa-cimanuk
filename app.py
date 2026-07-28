@@ -14,14 +14,13 @@ for subfolder in ['galeri', 'dokumentasi', 'pengaduan']:
     os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], subfolder), exist_ok=True)
 
 def get_db():
-    """Koneksi database MySQL."""
-    conn = mysql.connector.connect(
+    return mysql.connector.connect(
         host=DB_HOST,
         user=DB_USER,
         password=DB_PASSWORD,
-        database=DB_NAME
+        database=DB_NAME,
+        port=DB_PORT
     )
-    return conn
 
 # ============================================
 # FRONTEND
