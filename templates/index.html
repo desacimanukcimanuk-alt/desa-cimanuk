@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelurahan Cimanuk - Website Resmi</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS untuk grid & modal (tambahan) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           DESIGN TOKENS
+        ========================================================= */
+        :root {
+            --navy: #1E3A5F;
+            --navy-dark: #14283F;
+            --navy-soft: #2C4A73;
+            --accent: #4A7FC9;
+            --accent-soft: #EAF2FC;
+            --success: #2E9E6C;
+            --danger: #E15554;
+            --warning: #E2A63A;
+            --bg: #F5F7FA;
+            --card: #FFFFFF;
+            --border: #E5E7EB;
+            --text: #1F2937;
+            --text-muted: #64748B;
+            --radius-lg: 18px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 2px 10px rgba(20, 40, 63, 0.06);
+            --shadow-md: 0 12px 30px rgba(20, 40, 63, 0.10);
+            --shadow-lg: 0 20px 50px rgba(20, 40, 63, 0.16);
+            --transition: 0.35s cubic-bezier(.4,0,.2,1);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-weight: 700;
+            color: var(--navy-dark);
+        }
+
+        a { text-decoration: none; }
+
+        ::selection { background: var(--accent); color: #fff; }
+
+        /* Scroll reveal base state */
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+        .navbar {
+            background: transparent;
+            padding: 20px 0;
+            transition: var(--transition);
+        }
+        .navbar.navbar-scrolled {
+            background: rgba(30, 58, 95, 0.96);
+            backdrop-filter: blur(10px);
+            padding: 12px 0;
+            box-shadow: var(--shadow-md);
+        }
+        .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: .3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-brand i { color: var(--accent); }
+        .navbar .nav-link {
+            color: rgba(255,255,255,0.88) !important;
+            font-weight: 500;
+            font-size: .95rem;
+            margin: 0 4px;
+            padding: 8px 14px !important;
+            border-radius: 999px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .navbar .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255,255,255,0.12);
+        }
+        .navbar-toggler {
+            border: none;
+            box-shadow: none !important;
+            padding: 4px 8px;
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,0.9)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: rgba(30, 58, 95, 0.98);
+                border-radius: var(--radius-md);
+                margin-top: 12px;
+                padding: 10px;
+            }
+        }
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+        .hero {
+            position: relative;
+            background:
+                linear-gradient(160deg, rgba(20,40,63,0.88), rgba(30,58,95,0.78)),
+                url('static/assets/default/hero-bg.jpg') center/cover;
+            color: #fff;
+            padding: 170px 0 130px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            /* subtle topographic / contour line motif — nods to a kelurahan's administrative map */
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                repeating-radial-gradient(circle at 85% 20%, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 46px),
+                repeating-radial-gradient(circle at 8% 85%, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 46px);
+            pointer-events: none;
+        }
+        .hero-inner { position: relative; z-index: 1; animation: heroFade 1s ease both; }
+        .hero .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .8rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent-soft);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 999px;
+            margin-bottom: 22px;
+        }
+        .hero h1 {
+            color: #fff;
+            font-size: clamp(1.9rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -.5px;
+        }
+        .hero h2 {
+            color: #fff;
+            font-weight: 600;
+            font-size: clamp(1.4rem, 3vw, 2.1rem);
+            margin-bottom: 18px;
+        }
+        .hero p {
+            color: rgba(255,255,255,0.82);
+            font-size: 1.05rem;
+            max-width: 560px;
+            margin: 0 auto 34px;
+        }
+        .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .btn-hero {
+            padding: 13px 30px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: .95rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-hero-primary { background: var(--accent); color: #fff; }
+        .btn-hero-primary:hover { background: #3f6fb3; color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-hero-outline { border: 1.5px solid rgba(255,255,255,0.5); color: #fff; }
+        .btn-hero-outline:hover { background: rgba(255,255,255,0.12); border-color: #fff; transform: translateY(-2px); }
+
+        @keyframes heroFade {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================================
+           SECTION TITLE
+        ========================================================= */
+        .section-title {
+            margin: 0 0 30px;
+            padding-left: 18px;
+            position: relative;
+            font-size: 1.65rem;
+        }
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 4px; bottom: 4px;
+            width: 5px;
+            border-radius: 4px;
+            background: linear-gradient(180deg, var(--accent), var(--navy));
+        }
+        .section-title .subtitle {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: .8rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        section { padding-top: 30px; }
+
+        /* =========================================================
+           CARDS (Sambutan / Profil / general)
+        ========================================================= */
+        .info-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 30px;
+            height: 100%;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .info-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+        .info-card p { color: var(--text-muted); margin-bottom: 0; }
+
+        /* Statistik */
+        #statistik-section { margin-top: 10px; }
+        .stat-card {
+            background: var(--navy);
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+            color: #fff;
+            border-radius: var(--radius-lg);
+            padding: 30px 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            height: 100%;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .stat-card i { font-size: 1.6rem; color: var(--accent-soft); margin-bottom: 10px; }
+        .stat-card h4 { color: rgba(255,255,255,0.85); font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+        .stat-card p { font-size: 1.9rem; font-weight: 700; margin: 0; font-family: 'Poppins', sans-serif; }
+
+        /* =========================================================
+           GALERI TERBARU / GRID
+        ========================================================= */
+        .galeri-img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: transform .45s ease, filter .45s ease;
+            display: block;
+        }
+        .galeri-tile {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .galeri-tile:hover { box-shadow: var(--shadow-md); }
+        .galeri-tile:hover .galeri-img { transform: scale(1.08); }
+        .galeri-tile::after {
+            content: '\f00e';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.4rem;
+            background: linear-gradient(180deg, rgba(20,40,63,0) 40%, rgba(20,40,63,0.65) 100%);
+            opacity: 0;
+            transition: opacity .35s ease;
+            pointer-events: none;
+        }
+        .galeri-tile:hover::after { opacity: 1; }
+        .galeri-tile p {
+            text-align: center;
+            margin: 10px 0 0;
+            font-weight: 600;
+            font-size: .92rem;
+            color: var(--navy-dark);
+        }
+
+        #recent-galeri .col-md-4 { margin-bottom: 22px; }
+
+        /* Dokumentasi terbaru (list-group items generated by JS) */
+        #recent-dok .list-group-item {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm) !important;
+            margin-bottom: 10px;
+            padding: 14px 18px;
+            font-weight: 500;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        #recent-dok .list-group-item:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        /* =========================================================
+           TENTANG
+        ========================================================= */
+        #logo-kelurahan {
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 10px;
+            background: #fff;
+            border: 1px solid var(--border);
+        }
+        #tentang h5 {
+            color: var(--navy);
+            font-size: 1rem;
+            margin-top: 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #tentang h5::before {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        #tentang-profil, #tentang-sejarah, #tentang-visi, #tentang-misi { color: var(--text-muted); }
+
+        /* =========================================================
+           GALERI (full section) FILTER BUTTONS
+        ========================================================= */
+        .filter-btn {
+            border: 1.5px solid var(--border);
+            background: #fff;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: .85rem;
+            padding: 8px 20px;
+            border-radius: 999px;
+            margin: 0 8px 10px 0;
+            transition: var(--transition);
+        }
+        .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .filter-btn.active-filter, .filter-btn:active {
+            background: var(--navy) !important;
+            border-color: var(--navy) !important;
+            color: #fff !important;
+        }
+
+        /* =========================================================
+           DOKUMENTASI TABLE
+        ========================================================= */
+        #dok-search {
+            border-radius: 999px;
+            border: 1.5px solid var(--border);
+            padding: 12px 22px;
+            max-width: 420px;
+            transition: var(--transition);
+        }
+        #dok-search:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+        .table-wrapper {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+        .table-wrapper .table { margin-bottom: 0; }
+        .table-wrapper thead { background: var(--navy); }
+        .table-wrapper thead th {
+            color: #fff;
+            font-weight: 600;
+            font-size: .82rem;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            border: none;
+            padding: 16px 20px;
+        }
+        .table-wrapper tbody td { padding: 14px 20px; vertical-align: middle; border-color: var(--border); color: var(--text); }
+        .table-wrapper tbody tr { transition: var(--transition); }
+        .table-wrapper tbody tr:hover { background: var(--accent-soft); }
+        .table-wrapper .btn-primary {
+            width: 38px; height: 38px; padding: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+
+        /* =========================================================
+           KONTAK / PENGADUAN
+        ========================================================= */
+        #kontak h5 { color: var(--navy); font-weight: 600; margin-bottom: 6px; margin-top: 18px; }
+        #kontak h5:first-child { margin-top: 0; }
+        #kontak-alamat, #kontak-telepon, #kontak-email { color: var(--text-muted); }
+
+        .kontak-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+        #form-pengaduan .form-control {
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            padding: 12px 16px;
+            transition: var(--transition);
+        }
+        #form-pengaduan .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+        #form-pengaduan button[type="submit"] {
+            position: relative;
+            overflow: hidden;
+            border-radius: 999px;
+            background: var(--navy);
+            border: none;
+            padding: 12px 32px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        #form-pengaduan button[type="submit"]:hover { background: var(--navy-soft); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        /* Button ripple (pure CSS, triggered via JS class toggle) */
+        .ripple { position: relative; overflow: hidden; }
+        .ripple .ripple-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.55);
+            transform: scale(0);
+            animation: rippleAnim .6s linear;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim { to { transform: scale(3); opacity: 0; } }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+        .footer {
+            background: var(--navy-dark);
+            color: rgba(255,255,255,0.75);
+            padding: 34px 0;
+            margin-top: 70px;
+            text-align: center;
+        }
+        .footer .footer-social { margin-bottom: 14px; }
+        .footer .footer-social a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            margin: 0 5px;
+            transition: var(--transition);
+        }
+        .footer .footer-social a:hover { background: var(--accent); transform: translateY(-3px); }
+        .footer p { margin: 0; font-size: .88rem; }
+
+        /* =========================================================
+           MODAL PREVIEW GALERI
+        ========================================================= */
+        #galeriModal .modal-content {
+            border: none;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        #galeriModal .modal-body { padding: 0; }
+        .modal img { width: 100%; display: block; }
+
+        /* =========================================================
+           MISC / RESPONSIVE
+        ========================================================= */
+        .container { max-width: 1180px; }
+
+        @media (max-width: 767px) {
+            .hero { padding: 140px 0 90px; }
+            .info-card, .kontak-card { padding: 22px; }
+            .section-title { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#home"><i class="fa-solid fa-landmark"></i> Kelurahan Cimanuk</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#galeri">Galeri</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#dokumentasi">Dokumentasi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= HERO / HOME ================= -->
+    <section id="home" class="hero">
+        <div class="container hero-inner">
+            <span class="eyebrow"><i class="fa-solid fa-shield-halved"></i> Pemerintah Kelurahan</span>
+            <h1>Selamat Datang di Website Resmi</h1>
+            <h2>Kelurahan Cimanuk</h2>
+            <p>Kecamatan Cimanuk, Kabupaten Pandeglang, Banten &mdash; melayani warga dengan informasi yang transparan dan terpercaya.</p>
+            <div class="hero-cta">
+                <a href="#tentang" class="btn-hero btn-hero-primary"><i class="fa-solid fa-book-open"></i> Profil Kelurahan</a>
+                <a href="#kontak" class="btn-hero btn-hero-outline"><i class="fa-solid fa-envelope"></i> Ajukan Pengaduan</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SAMBUTAN & PROFIL SINGKAT ================= -->
+    <div class="container mt-5">
+        <div id="sambutan-section" class="row g-4">
+            <div class="col-md-6 reveal">
+                <div class="info-card">
+                    <h3 class="section-title"><span class="subtitle">Kata Pembuka</span>Sambutan Lurah</h3>
+                    <p id="sambutan-text">Memuat...</p>
+                </div>
+            </div>
+            <div class="col-md-6 reveal">
+                <div class="info-card">
+                    <h3 class="section-title"><span class="subtitle">Selayang Pandang</span>Profil Singkat</h3>
+                    <p id="profil-singkat"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistik -->
+        <div class="row text-center mt-4 g-4" id="statistik-section">
+            <div class="col-md-4 reveal">
+                <div class="stat-card">
+                    <i class="fa-solid fa-people-group"></i>
+                    <h4>Jumlah Penduduk</h4>
+                    <p id="stat-penduduk">-</p>
+                </div>
+            </div>
+            <div class="col-md-4 reveal">
+                <div class="stat-card">
+                    <i class="fa-solid fa-house-chimney"></i>
+                    <h4>Jumlah KK</h4>
+                    <p id="stat-kk">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6 Foto Galeri Terbaru -->
+        <h3 class="section-title mt-5"><span class="subtitle">Dokumentasi Visual</span>Galeri Terbaru</h3>
+        <div class="row" id="recent-galeri"></div>
+
+        <!-- 5 Dokumentasi Terbaru -->
+        <h3 class="section-title mt-4"><span class="subtitle">Arsip Resmi</span>Dokumentasi Terbaru</h3>
+        <div class="list-group" id="recent-dok"></div>
+    </div>
+
+    <!-- ================= TENTANG ================= -->
+    <section id="tentang" class="container mt-5">
+        <h2 class="section-title"><span class="subtitle">Profil</span>Tentang Kelurahan</h2>
+        <div class="row g-4 align-items-start">
+            <div class="col-md-4 text-center reveal">
+                <img id="logo-kelurahan" src="static/assets/logo/default.png" alt="Logo" style="max-width: 200px;">
+            </div>
+            <div class="col-md-8 reveal">
+                <div class="info-card">
+                    <div id="tentang-profil"></div>
+                    <h5>Sejarah</h5>
+                    <p id="tentang-sejarah"></p>
+                    <h5>Visi</h5>
+                    <p id="tentang-visi"></p>
+                    <h5>Misi</h5>
+                    <p id="tentang-misi"></p>
+                    <h5>Struktur Organisasi</h5>
+                    <div id="tentang-struktur"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= GALERI ================= -->
+    <section id="galeri" class="container mt-5">
+        <h2 class="section-title"><span class="subtitle">Momen &amp; Kegiatan</span>Galeri</h2>
+        <div class="mb-4">
+            <button class="btn filter-btn active-filter" data-kategori="semua">Semua</button>
+            <!-- Kategori diisi dinamis -->
+        </div>
+        <div class="row" id="galeri-grid"></div>
+    </section>
+
+    <!-- ================= DOKUMENTASI ================= -->
+    <section id="dokumentasi" class="container mt-5">
+        <h2 class="section-title"><span class="subtitle">Unduh Berkas</span>Dokumentasi</h2>
+        <input type="text" id="dok-search" class="form-control mb-4" placeholder="Cari dokumen...">
+        <div class="table-wrapper">
+            <table class="table table-striped mb-0">
+                <thead><tr><th>Nama Dokumen</th><th>Kategori</th><th>Tanggal</th><th>Download</th></tr></thead>
+                <tbody id="dok-table"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ================= KONTAK / PENGADUAN ================= -->
+    <section id="kontak" class="container mt-5 mb-5">
+        <h2 class="section-title"><span class="subtitle">Hubungi Kami</span>Kontak &amp; Pengaduan</h2>
+        <div class="row g-4">
+            <div class="col-md-5 reveal">
+                <div class="kontak-card h-100">
+                    <h5><i class="fa-solid fa-location-dot me-2"></i>Alamat</h5>
+                    <p id="kontak-alamat"></p>
+                    <h5><i class="fa-solid fa-phone me-2"></i>Telepon</h5>
+                    <p id="kontak-telepon"></p>
+                    <h5><i class="fa-solid fa-envelope me-2"></i>Email</h5>
+                    <p id="kontak-email"></p>
+                </div>
+            </div>
+            <div class="col-md-7 reveal">
+                <div class="kontak-card">
+                    <h5><i class="fa-solid fa-paper-plane me-2"></i>Form Pengaduan</h5>
+                    <form id="form-pengaduan" enctype="multipart/form-data" class="mt-3">
+                        <input class="form-control mb-3" name="judul" placeholder="Judul Pengaduan" required>
+                        <textarea class="form-control mb-3" name="isi" rows="4" placeholder="Isi Pengaduan" required></textarea>
+                        <input class="form-control mb-3" type="file" name="foto">
+                        <button type="submit" class="btn btn-primary ripple">Kirim Pengaduan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-social">
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            <p>&copy; Kelurahan Cimanuk. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================= MODAL PREVIEW GALERI ================= -->
+    <div class="modal fade" id="galeriModal" tabindex="-1">
+        <div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-body"><img id="modal-img" src=""></div></div></div>
+    </div>
+
+    <!-- ================= SCRIPTS ================= -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let allGaleri = [], allDok = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/frontend')
+                .then(res => res.json())
+                .then(data => {
+                    // Home
+                    if(data.tentang) {
+                        document.getElementById('sambutan-text').innerText = data.tentang.sambutan_lurah || 'Belum tersedia';
+                        document.getElementById('profil-singkat').innerText = data.tentang.profil ? data.tentang.profil.substring(0, 200) + '...' : '';
+                        document.getElementById('stat-penduduk').innerText = data.tentang.jumlah_penduduk || '-';
+                        document.getElementById('stat-kk').innerText = data.tentang.jumlah_kk || '-';
+                        document.getElementById('stat-luas').innerText = data.tentang.luas_wilayah || '-';
+                        // Tentang
+                        document.getElementById('logo-kelurahan').src = 'static/assets/logo/' + (data.tentang.logo || 'default.png');
+                        document.getElementById('tentang-profil').innerHTML = `<p>${data.tentang.profil || ''}</p>`;
+                        document.getElementById('tentang-sejarah').innerText = data.tentang.sejarah || '';
+                        document.getElementById('tentang-visi').innerText = data.tentang.visi || '';
+                        document.getElementById('tentang-misi').innerText = data.tentang.misi || '';
+                        document.getElementById('tentang-struktur').innerHTML = data.tentang.struktur_organisasi || '';
+                        // Kontak
+                        document.getElementById('kontak-alamat').innerText = data.tentang.alamat || '';
+                        document.getElementById('kontak-telepon').innerText = data.tentang.telepon || '';
+                        document.getElementById('kontak-email').innerText = data.tentang.email || '';
+                    }
+                    // Recent galeri
+                    let recentHtml = '';
+                    data.recent_galeri.forEach(g => {
+                        recentHtml += `<div class="col-md-4 mb-3"><div class="galeri-tile"><img src="static/upload/galeri/${g.foto}" class="galeri-img" onclick="previewImage('${g.foto}')" alt="${g.judul}"></div></div>`;
+                    });
+                    document.getElementById('recent-galeri').innerHTML = recentHtml;
+                    // Recent dokumentasi
+                    let dokHtml = '';
+                    data.recent_dokumentasi.forEach(d => {
+                        dokHtml += `<a href="static/upload/dokumentasi/${d.file_path}" class="list-group-item list-group-item-action" download><i class="fa-solid fa-file-lines me-2"></i>${d.nama_dokumen} (${d.kategori}) - ${new Date(d.created_at).toLocaleDateString()}</a>`;
+                    });
+                    document.getElementById('recent-dok').innerHTML = dokHtml;
+                    // All galeri & dokumentasi
+                    allGaleri = data.all_galeri;
+                    allDok = data.all_dokumentasi;
+                    renderGaleri('semua');
+                    renderDokumentasi(allDok);
+                    // Kategori filter buttons
+                    let filterDiv = document.querySelector('#galeri .mb-4');
+                    kats.forEach(k => {
+                        filterDiv.innerHTML += `<button class="btn filter-btn" data-kategori="${k}">${k}</button>`;
+                    });
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.addEventListener('click', function(){
+                            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active-filter'));
+                            this.classList.add('active-filter');
+                            renderGaleri(this.dataset.kategori);
+                        });
+                    });
+                    // Re-run reveal-on-scroll for newly injected content
+                    observeReveals();
+                });
+
+            // Search dokumentasi
+            document.getElementById('dok-search').addEventListener('input', function(){
+                let keyword = this.value.toLowerCase();
+                let filtered = allDok.filter(d => d.nama_dokumen.toLowerCase().includes(keyword) || d.kategori.toLowerCase().includes(keyword));
+                renderDokumentasi(filtered);
+            });
+
+            // Form pengaduan
+            document.getElementById('form-pengaduan').addEventListener('submit', function(e){
+                e.preventDefault();
+                let formData = new FormData(this);
+                fetch('/api/pengaduan', { method: 'POST', body: formData })
+                    .then(res => res.json())
+                    .then(data => {
+                        Swal.fire('Sukses!', data.message, 'success');
+                        this.reset();
+                    })
+                    .catch(err => Swal.fire('Error', 'Gagal mengirim', 'error'));
+            });
+
+            // Navbar scroll transition
+            const navbarEl = document.querySelector('.navbar');
+            const toggleNavbarStyle = () => {
+                if (window.scrollY > 40) navbarEl.classList.add('navbar-scrolled');
+                else navbarEl.classList.remove('navbar-scrolled');
+            };
+            toggleNavbarStyle();
+            window.addEventListener('scroll', toggleNavbarStyle);
+
+            // Collapse mobile menu after clicking a link
+            document.querySelectorAll('#navbarNav .nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    const collapseEl = document.getElementById('navbarNav');
+                    if (collapseEl.classList.contains('show')) {
+                        bootstrap.Collapse.getOrCreateInstance(collapseEl).hide();
+                    }
+                });
+            });
+
+            // Button ripple effect (pure CSS/JS, no library)
+            document.querySelectorAll('.ripple').forEach(btn => {
+                btn.addEventListener('click', function(e){
+                    const circle = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    circle.className = 'ripple-circle';
+                    circle.style.width = circle.style.height = size + 'px';
+                    circle.style.left = (e.clientX - rect.left - size/2) + 'px';
+                    circle.style.top = (e.clientY - rect.top - size/2) + 'px';
+                    this.appendChild(circle);
+                    setTimeout(() => circle.remove(), 600);
+                });
+            });
+
+            observeReveals();
+        });
+
+        function renderGaleri(kategori) {
+            let filtered = kategori === 'semua' ? allGaleri : allGaleri.filter(g => g.kategori === kategori);
+            let html = '';
+            filtered.forEach(g => {
+                html += `<div class="col-md-4 mb-3"><div class="galeri-tile"><img src="static/upload/galeri/${g.foto}" class="galeri-img" onclick="previewImage('${g.foto}')" alt="${g.judul}"></div><p class="text-center">${g.judul}</p></div>`;
+            });
+            document.getElementById('galeri-grid').innerHTML = html;
+        }
+
+        function renderDokumentasi(data) {
+            let html = '';
+            data.forEach(d => {
+                html += `<tr><td>${d.nama_dokumen}</td><td>${d.kategori}</td><td>${new Date(d.created_at).toLocaleDateString()}</td><td><a href="static/upload/dokumentasi/${d.file_path}" class="btn btn-sm btn-primary" download><i class="fa fa-download"></i></a></td></tr>`;
+            });
+            document.getElementById('dok-table').innerHTML = html;
+        }
+
+        function previewImage(filename) {
+            document.getElementById('modal-img').src = 'static/upload/galeri/' + filename;
+            let modal = new bootstrap.Modal(document.getElementById('galeriModal'));
+            modal.show();
+        }
+
+        // Simple scroll-reveal using IntersectionObserver
+        function observeReveals() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.reveal:not(.in-view)').forEach(el => observer.observe(el));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Kelurahan Cimanuk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================================
+           DESIGN TOKENS (matched to public site & login)
+           Dashboard is desktop/laptop-optimized only.
+        ========================================================= */
+        :root {
+            --navy: #1E3A5F;
+            --navy-dark: #14283F;
+            --navy-soft: #2C4A73;
+            --accent: #4A7FC9;
+            --accent-soft: #EAF2FC;
+            --success: #2E9E6C;
+            --success-soft: #E7F6EF;
+            --danger: #E15554;
+            --danger-soft: #FCEBEB;
+            --warning: #E2A63A;
+            --warning-soft: #FCF3E3;
+            --bg: #F5F7FA;
+            --card: #FFFFFF;
+            --border: #E5E7EB;
+            --text: #1F2937;
+            --text-muted: #64748B;
+            --sidebar-w: 264px;
+            --radius-lg: 18px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 2px 10px rgba(20, 40, 63, 0.06);
+            --shadow-md: 0 12px 30px rgba(20, 40, 63, 0.10);
+            --transition: 0.25s cubic-bezier(.4,0,.2,1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-width: 1100px; /* desktop/laptop only, per requirement */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-weight: 700;
+            color: var(--navy-dark);
+            margin: 0;
+        }
+
+        /* =========================================================
+           SIDEBAR
+        ========================================================= */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg, var(--navy-dark) 0%, var(--navy) 100%);
+            color: white;
+            padding-top: 0;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 24px rgba(20,40,63,0.12);
+            z-index: 100;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 26px 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar-brand .brand-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .sidebar-brand .brand-text h4 {
+            color: #fff;
+            font-size: .98rem;
+            margin: 0;
+            line-height: 1.25;
+        }
+        .sidebar-brand .brand-text span {
+            color: rgba(255,255,255,0.55);
+            font-size: .72rem;
+            font-weight: 500;
+        }
+        .sidebar-nav {
+            padding: 18px 14px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .sidebar-nav .nav-label {
+            color: rgba(255,255,255,0.35);
+            font-size: .7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+        .sidebar a {
+            color: rgba(255,255,255,0.78);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: .92rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .sidebar a i { width: 18px; text-align: center; font-size: .95rem; }
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        .sidebar a.active-link {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+        .sidebar a.active-link::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 50%; transform: translateY(-50%);
+            width: 4px; height: 22px;
+            border-radius: 4px;
+            background: var(--accent);
+        }
+        .sidebar-footer {
+            padding: 14px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar-footer a {
+            color: rgba(255,255,255,0.65);
+        }
+        .sidebar-footer a:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* =========================================================
+           MAIN CONTENT / TOPBAR
+        ========================================================= */
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-w);
+            background: var(--bg);
+            min-height: 100vh;
+        }
+        .topbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .topbar-title h6 {
+            color: var(--text-muted);
+            font-size: .74rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        .topbar-title h2 {
+            font-size: 1.3rem;
+        }
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .topbar-user .avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--accent-soft);
+            color: var(--navy);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            font-size: .95rem;
+        }
+        .topbar-user .u-name { font-size: .88rem; font-weight: 600; color: var(--text); }
+        .topbar-user .u-role { font-size: .74rem; color: var(--text-muted); }
+
+        .content-inner { padding: 30px 34px 50px; }
+
+        .menu-section { display: none; animation: fadeInUp .4s ease both; }
+        .menu-section.active { display: block; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .section-heading h3 { font-size: 1.2rem; }
+
+        /* =========================================================
+           BUTTONS
+        ========================================================= */
+        .btn {
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: .88rem;
+            transition: var(--transition);
+        }
+        .btn-primary {
+            background: var(--navy);
+            border-color: var(--navy);
+        }
+        .btn-primary:hover {
+            background: var(--navy-soft);
+            border-color: var(--navy-soft);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-success {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        .btn-success:hover {
+            background: #268a5f;
+            border-color: #268a5f;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-danger { background: var(--danger); border-color: var(--danger); }
+        .btn-danger:hover { background: #c94847; border-color: #c94847; }
+        .btn-warning { background: var(--warning); border-color: var(--warning); color: #fff; }
+        .btn-warning:hover { background: #c9922f; border-color: #c9922f; color: #fff; }
+        .btn-info { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .btn-info:hover { background: #3f6fb3; border-color: #3f6fb3; color: #fff; }
+        .btn-sm {
+            width: 34px; height: 34px; padding: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+        }
+        .btn-secondary { background: #fff; border: 1.5px solid var(--border); color: var(--text-muted); }
+        .btn-secondary:hover { background: var(--bg); }
+
+        /* =========================================================
+           CARD STAT (Dashboard overview)
+        ========================================================= */
+        .card-stat { color: white; }
+        #dashboard-stats { margin-bottom: 6px; }
+        .stat-tile {
+            border-radius: var(--radius-lg);
+            padding: 24px 26px;
+            color: #fff;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+        }
+        .stat-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .stat-tile i.stat-icon {
+            position: absolute;
+            right: 18px; top: 18px;
+            font-size: 1.9rem;
+            opacity: .28;
+        }
+        .stat-tile h5 {
+            color: rgba(255,255,255,0.88);
+            font-size: .82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-bottom: 8px;
+        }
+        .stat-tile .fs-3 { font-family: 'Poppins', sans-serif; font-weight: 700; margin: 0; font-size: 2rem !important; }
+        .stat-tile.tile-navy { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%); }
+        .stat-tile.tile-success { background: linear-gradient(135deg, #227a58 0%, var(--success) 100%); }
+        .stat-tile.tile-accent { background: linear-gradient(135deg, #3a6bab 0%, var(--accent) 100%); }
+
+        .dash-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            height: 100%;
+        }
+        .dash-card .card-body { padding: 24px; }
+        .dash-card h5 { font-size: 1rem; margin-bottom: 16px; }
+
+        #dashboard .list-group-item {
+            border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 13px 4px;
+            font-weight: 500;
+            font-size: .9rem;
+            color: var(--text);
+        }
+        #dashboard .list-group-item:last-child { border-bottom: none; }
+        .badge { font-weight: 600; padding: 6px 12px; border-radius: 999px; font-size: .76rem; }
+        .badge.bg-warning { background: var(--warning) !important; color: #fff; }
+        .badge.bg-primary { background: var(--accent) !important; }
+        .badge.bg-success { background: var(--success) !important; }
+
+        /* =========================================================
+           TABLES
+        ========================================================= */
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .table { margin-bottom: 0; }
+        .table thead { background: var(--bg); }
+        .table thead th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: .74rem;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+        }
+        .table tbody td {
+            padding: 13px 20px;
+            vertical-align: middle;
+            border-color: var(--border);
+            font-size: .89rem;
+            color: var(--text);
+        }
+        .table.table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(245, 247, 250, 0.6); }
+        .table tbody tr { transition: var(--transition); }
+        .table tbody tr:hover td { background-color: var(--accent-soft); }
+        .table img {
+            width: 76px; height: 56px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+        .table td .btn-sm + .btn-sm { margin-left: 6px; }
+
+        /* =========================================================
+           MODALS
+        ========================================================= */
+        .modal-content {
+            border: none;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 25px 60px rgba(10,22,40,0.28);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: var(--navy);
+            border-bottom: none;
+            padding: 20px 26px;
+        }
+        .modal-header .modal-title { color: #fff; font-size: 1.05rem; }
+        .modal-header .btn-close { filter: invert(1) brightness(2); opacity: .8; }
+        .modal-header .btn-close:hover { opacity: 1; }
+        .modal-body { padding: 26px; }
+        .modal-body img { max-width: 100%; border-radius: var(--radius-sm); }
+        .modal-body label {
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .modal-body .form-control, .modal-body .form-select {
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            padding: 10px 14px;
+            font-size: .9rem;
+            transition: var(--transition);
+        }
+        .modal-body .form-control:focus, .modal-body .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+        .modal-body small.text-muted { font-size: .78rem; }
+        .modal-footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 26px;
+        }
+
+        /* Search box (used within tables if needed) */
+        .search-box {
+            position: relative;
+            max-width: 320px;
+        }
+        .search-box input {
+            border-radius: 999px;
+            padding: 9px 16px 9px 38px;
+            border: 1.5px solid var(--border);
+            font-size: .87rem;
+        }
+        .search-box i {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: .82rem;
+        }
+
+        /* Chart container */
+        #pengaduanChart { max-height: 320px; }
+
+        /* Scrollbar polish (desktop only, harmless if unsupported) */
+        .sidebar-nav::-webkit-scrollbar { width: 5px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fa-solid fa-landmark"></i></div>
+            <div class="brand-text">
+                <h4>Admin Panel</h4>
+                <span>Kelurahan Cimanuk</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-label">Menu Utama</div>
+            <a href="#" data-menu="dashboard" class="active-link"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
+            <a href="#" data-menu="tentang"><i class="fa fa-info-circle"></i> Tentang</a>
+            <a href="#" data-menu="galeri"><i class="fa fa-images"></i> Galeri</a>
+            <a href="#" data-menu="dokumentasi"><i class="fa fa-file-alt"></i> Dokumentasi</a>
+            <a href="#" data-menu="pengaduan"><i class="fa fa-envelope"></i> Pengaduan</a>
+            <a href="#" data-menu="admin"><i class="fa fa-users-cog"></i> Admin</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="/logout"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <div class="content">
+        <div class="topbar">
+            <div class="topbar-title">
+                <h6>Panel Administrasi</h6>
+                <h2 id="topbar-page-title">Dashboard</h2>
+            </div>
+            <div class="topbar-user">
+                <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
+                <div>
+                    <div class="u-name">Administrator</div>
+                    <div class="u-role">Kelurahan Cimanuk</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-inner">
+        <!-- ==================== DASHBOARD ==================== -->
+        <div id="dashboard" class="menu-section active">
+            <div class="section-heading"><h3>Ringkasan Dashboard</h3></div>
+            <div class="row g-3" id="dashboard-stats">
+                <div class="col-md-4"><div class="stat-tile tile-navy"><i class="fa-solid fa-images stat-icon"></i><h5>Total Galeri</h5><p class="fs-3" id="stat-galeri">0</p></div></div>
+                <div class="col-md-4"><div class="stat-tile tile-success"><i class="fa-solid fa-file-alt stat-icon"></i><h5>Total Dokumentasi</h5><p class="fs-3" id="stat-dok">0</p></div></div>
+                <div class="col-md-4"><div class="stat-tile tile-accent"><i class="fa-solid fa-envelope stat-icon"></i><h5>Total Pengaduan</h5><p class="fs-3" id="stat-pengaduan">0</p></div></div>
+            </div>
+            <div class="row mt-3 g-3">
+                <div class="col-md-6">
+                    <div class="dash-card">
+                        <div class="card-body">
+                            <h5>Grafik Status Pengaduan</h5>
+                            <canvas id="pengaduanChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="dash-card">
+                        <div class="card-body">
+                            <h5>Detail Status Pengaduan</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Menunggu <span id="stat-menunggu" class="badge bg-warning">0</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Diproses <span id="stat-diproses" class="badge bg-primary">0</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Selesai <span id="stat-selesai" class="badge bg-success">0</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TENTANG ==================== -->
+        <div id="tentang" class="menu-section">
+            <div class="section-heading">
+                <h3>Profil Kelurahan</h3>
+                <button class="btn btn-primary" onclick="editTentang()"><i class="fa fa-edit"></i> Edit Profil</button>
+            </div>
+            <div class="dash-card"><div class="card-body" id="tentang-content">Memuat data...</div></div>
+        </div>
+
+        <!-- ==================== GALERI ==================== -->
+        <div id="galeri" class="menu-section">
+            <div class="section-heading">
+                <h3>Manajemen Galeri</h3>
+                <button class="btn btn-success" onclick="openGaleriModal()"><i class="fa fa-plus"></i> Tambah Foto</button>
+            </div>
+            <div class="table-card">
+                <table class="table table-bordered table-striped">
+                    <thead><tr><th>Foto</th><th>Judul</th><th>Kategori</th><th>Aksi</th></tr></thead>
+                    <tbody id="galeri-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== DOKUMENTASI ==================== -->
+        <div id="dokumentasi" class="menu-section">
+            <div class="section-heading">
+                <h3>Manajemen Dokumentasi</h3>
+                <button class="btn btn-success" onclick="openDokModal()"><i class="fa fa-plus"></i> Tambah Dokumen</button>
+            </div>
+            <div class="table-card">
+                <table class="table table-bordered table-striped">
+                    <thead><tr><th>Nama Dokumen</th><th>Kategori</th><th>Tanggal</th><th>File</th><th>Aksi</th></tr></thead>
+                    <tbody id="dok-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== PENGADUAN ==================== -->
+        <div id="pengaduan" class="menu-section">
+            <div class="section-heading"><h3>Daftar Pengaduan</h3></div>
+            <div class="table-card">
+                <table class="table table-bordered table-striped">
+                    <thead><tr><th>Nama</th><th>Judul</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+                    <tbody id="pengaduan-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== ADMIN ==================== -->
+        <div id="admin" class="menu-section">
+            <div class="section-heading">
+                <h3>Manajemen Admin</h3>
+                <button class="btn btn-success" onclick="openAdminModal()"><i class="fa fa-plus"></i> Tambah Admin</button>
+            </div>
+            <div class="table-card">
+                <table class="table table-bordered table-striped">
+                    <thead><tr><th>Username</th><th>Nama</th><th>Aksi</th></tr></thead>
+                    <tbody id="admin-table"></tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Modal Galeri (Tambah/Edit) -->
+    <div class="modal fade" id="galeriModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form id="galeri-form" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galeriModalLabel">Tambah Foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="galeri-id">
+                    <div class="mb-3"><label>Judul</label><input type="text" name="judul" class="form-control" required></div>
+                    <div class="mb-3"><label>Kategori</label><input type="text" name="kategori" class="form-control" required></div>
+                    <div class="mb-3"><label>Foto</label><input type="file" name="foto" class="form-control" accept="image/*"></div>
+                    <small class="text-muted">Biarkan kosong jika tidak ingin mengubah foto (saat edit)</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Dokumentasi (Tambah/Edit) -->
+    <div class="modal fade" id="dokModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form id="dok-form" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dokModalLabel">Tambah Dokumen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="dok-id">
+                    <div class="mb-3"><label>Nama Dokumen</label><input type="text" name="nama_dokumen" class="form-control" required></div>
+                    <div class="mb-3"><label>Kategori</label><input type="text" name="kategori" class="form-control" required></div>
+                    <div class="mb-3"><label>File</label><input type="file" name="file_dok" class="form-control"></div>
+                    <small class="text-muted">Biarkan kosong jika tidak ingin mengubah file (saat edit)</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Tentang (Edit Profil) -->
+    <div class="modal fade" id="tentangModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <form id="tentang-form" class="modal-content" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profil Kelurahan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3"><label>Logo</label><input type="file" name="logo" class="form-control" accept="image/*"></div>
+                            <div class="mb-3"><label>Profil</label><textarea name="profil" class="form-control" rows="3"></textarea></div>
+                            <div class="mb-3"><label>Sejarah</label><textarea name="sejarah" class="form-control" rows="3"></textarea></div>
+                            <div class="mb-3"><label>Visi</label><textarea name="visi" class="form-control" rows="2"></textarea></div>
+                            <div class="mb-3"><label>Misi</label><textarea name="misi" class="form-control" rows="2"></textarea></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3"><label>Struktur Organisasi (HTML)</label><textarea name="struktur_organisasi" class="form-control" rows="3"></textarea></div>
+                            <div class="mb-3"><label>Sambutan Lurah</label><textarea name="sambutan_lurah" class="form-control" rows="3"></textarea></div>
+                            <div class="mb-3"><label>Alamat</label><input type="text" name="alamat" class="form-control"></div>
+                            <div class="mb-3"><label>Telepon</label><input type="text" name="telepon" class="form-control"></div>
+                            <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control"></div>
+                            <div class="mb-3"><label>Maps Embed (iframe)</label><textarea name="maps_embed" class="form-control" rows="3"></textarea></div>
+                            <div class="row">
+                                <div class="col"><label>Jml Penduduk</label><input type="number" name="jumlah_penduduk" class="form-control"></div>
+                                <div class="col"><label>Jml KK</label><input type="number" name="jumlah_kk" class="form-control"></div>
+                                <div class="col"><label>Luas Wilayah</label><input type="text" name="luas_wilayah" class="form-control"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Detail Pengaduan -->
+    <div class="modal fade" id="pengaduanDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Pengaduan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="pengaduan-detail-content"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Admin (Tambah/Edit) -->
+    <div class="modal fade" id="adminModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form id="admin-form" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminModalLabel">Tambah Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="admin-id">
+                    <div class="mb-3"><label>Username</label><input type="text" name="username" class="form-control" required></div>
+                    <div class="mb-3"><label>Password</label><input type="password" name="password" class="form-control"></div>
+                    <small class="text-muted">Kosongkan jika tidak ingin mengubah password (saat edit)</small>
+                    <div class="mb-3 mt-2"><label>Nama</label><input type="text" name="nama" class="form-control" required></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Global vars
+        let chartInstance = null;
+        const baseUrl = '';
+
+        // Page titles shown in the topbar per menu (visual only)
+        const menuTitles = {
+            dashboard: 'Dashboard',
+            tentang: 'Profil Kelurahan',
+            galeri: 'Manajemen Galeri',
+            dokumentasi: 'Manajemen Dokumentasi',
+            pengaduan: 'Daftar Pengaduan',
+            admin: 'Manajemen Admin'
+        };
+
+        // Navigasi sidebar
+        document.querySelectorAll('.sidebar a[data-menu]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active-link'));
+                this.classList.add('active-link');
+                document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(this.dataset.menu).classList.add('active');
+                // Panggil fungsi load sesuai menu
+                const menu = this.dataset.menu;
+                const titleEl = document.getElementById('topbar-page-title');
+                if (titleEl && menuTitles[menu]) titleEl.innerText = menuTitles[menu];
+                if (menu === 'dashboard') loadDashboard();
+                else if (menu === 'tentang') loadTentang();
+                else if (menu === 'galeri') loadGaleri();
+                else if (menu === 'dokumentasi') loadDokumentasi();
+                else if (menu === 'pengaduan') loadPengaduan();
+                else if (menu === 'admin') loadAdmin();
+            });
+        });
+
+        // ==================== DASHBOARD ====================
+        async function loadDashboard() {
+            const res = await fetch('/admin/dashboard-stats');
+            const data = await res.json();
+            document.getElementById('stat-galeri').innerText = data.total_galeri;
+            document.getElementById('stat-dok').innerText = data.total_dokumentasi;
+            document.getElementById('stat-pengaduan').innerText = data.total_pengaduan;
+            document.getElementById('stat-menunggu').innerText = data.menunggu;
+            document.getElementById('stat-diproses').innerText = data.diproses;
+            document.getElementById('stat-selesai').innerText = data.selesai;
+            renderChart(data.menunggu, data.diproses, data.selesai);
+        }
+
+        function renderChart(menunggu, diproses, selesai) {
+            const ctx = document.getElementById('pengaduanChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Menunggu', 'Diproses', 'Selesai'],
+                    datasets: [{
+                        label: 'Jumlah Pengaduan',
+                        data: [menunggu, diproses, selesai],
+                        backgroundColor: ['#E2A63A', '#4A7FC9', '#2E9E6C'],
+                        borderRadius: 8,
+                        maxBarThickness: 56
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, precision: 0, grid: { color: '#EEF1F5' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // ==================== TENTANG ====================
+        async function loadTentang() {
+            const res = await fetch('/admin/tentang');
+            const data = await res.json();
+            const container = document.getElementById('tentang-content');
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="/static/assets/logo/${data.logo || 'default.png'}" alt="Logo" class="img-fluid mb-2" style="max-height:150px;">
+                    </div>
+                    <div class="col-md-9">
+                        <p><strong>Profil:</strong><br>${data.profil || '-'}</p>
+                        <p><strong>Sejarah:</strong><br>${data.sejarah || '-'}</p>
+                        <p><strong>Visi:</strong><br>${data.visi || '-'}</p>
+                        <p><strong>Misi:</strong><br>${data.misi || '-'}</p>
+                        <p><strong>Struktur Organisasi:</strong><br>${data.struktur_organisasi || '-'}</p>
+                        <p><strong>Sambutan Lurah:</strong><br>${data.sambutan_lurah || '-'}</p>
+                        <p><strong>Alamat:</strong> ${data.alamat || '-'}</p>
+                        <p><strong>Telepon:</strong> ${data.telepon || '-'} | <strong>Email:</strong> ${data.email || '-'}</p>
+                        <p><strong>Jumlah Penduduk:</strong> ${data.jumlah_penduduk || '-'} | <strong>KK:</strong> ${data.jumlah_kk || '-'} | <strong>Luas:</strong> ${data.luas_wilayah || '-'}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function editTentang() {
+            const res = await fetch('/admin/tentang');
+            const data = await res.json();
+            // Isi form di modal
+            document.querySelector('#tentang-form textarea[name="profil"]').value = data.profil || '';
+            document.querySelector('#tentang-form textarea[name="sejarah"]').value = data.sejarah || '';
+            document.querySelector('#tentang-form textarea[name="visi"]').value = data.visi || '';
+            document.querySelector('#tentang-form textarea[name="misi"]').value = data.misi || '';
+            document.querySelector('#tentang-form textarea[name="struktur_organisasi"]').value = data.struktur_organisasi || '';
+            document.querySelector('#tentang-form textarea[name="sambutan_lurah"]').value = data.sambutan_lurah || '';
+            document.querySelector('#tentang-form input[name="alamat"]').value = data.alamat || '';
+            document.querySelector('#tentang-form input[name="telepon"]').value = data.telepon || '';
+            document.querySelector('#tentang-form input[name="email"]').value = data.email || '';
+            document.querySelector('#tentang-form textarea[name="maps_embed"]').value = data.maps_embed || '';
+            document.querySelector('#tentang-form input[name="jumlah_penduduk"]').value = data.jumlah_penduduk || '';
+            document.querySelector('#tentang-form input[name="jumlah_kk"]').value = data.jumlah_kk || '';
+            document.querySelector('#tentang-form input[name="luas_wilayah"]').value = data.luas_wilayah || '';
+            new bootstrap.Modal(document.getElementById('tentangModal')).show();
+        }
+
+        document.getElementById('tentang-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const res = await fetch('/admin/tentang/update', { method: 'POST', body: formData });
+            const result = await res.json();
+            if (result.status === 'success') {
+                Swal.fire('Sukses!', 'Profil berhasil diperbarui.', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('tentangModal')).hide();
+                loadTentang();
+            } else {
+                Swal.fire('Error', 'Gagal memperbarui.', 'error');
+            }
+        });
+
+        // ==================== GALERI ====================
+        async function loadGaleri() {
+            const res = await fetch('/admin/galeri');
+            const data = await res.json();
+            let rows = '';
+            data.forEach(item => {
+                rows += `
+                    <tr>
+                        <td><img src="/static/upload/galeri/${item.foto}" alt="${item.judul}"></td>
+                        <td>${item.judul}</td>
+                        <td>${item.kategori}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editGaleri(${item.id})"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteGaleri(${item.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById('galeri-table').innerHTML = rows;
+        }
+
+        function openGaleriModal() {
+            document.getElementById('galeri-id').value = '';
+            document.querySelector('#galeri-form input[name="judul"]').value = '';
+            document.querySelector('#galeri-form input[name="kategori"]').value = '';
+            document.querySelector('#galeri-form input[name="foto"]').value = '';
+            document.getElementById('galeriModalLabel').innerText = 'Tambah Foto';
+            new bootstrap.Modal(document.getElementById('galeriModal')).show();
+        }
+
+        async function editGaleri(id) {
+            const res = await fetch('/admin/galeri');
+            const list = await res.json();
+            const item = list.find(g => g.id == id);
+            if (!item) return;
+            document.getElementById('galeri-id').value = item.id;
+            document.querySelector('#galeri-form input[name="judul"]').value = item.judul;
+            document.querySelector('#galeri-form input[name="kategori"]').value = item.kategori;
+            document.querySelector('#galeri-form input[name="foto"]').value = ''; // reset file
+            document.getElementById('galeriModalLabel').innerText = 'Edit Foto';
+            new bootstrap.Modal(document.getElementById('galeriModal')).show();
+        }
+
+        document.getElementById('galeri-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const id = formData.get('id');
+            const url = id ? '/admin/galeri/update' : '/admin/galeri/add';
+            const res = await fetch(url, { method: 'POST', body: formData });
+            const result = await res.json();
+            if (result.status === 'success') {
+                Swal.fire('Sukses!', 'Data galeri disimpan.', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('galeriModal')).hide();
+                loadGaleri();
+            } else {
+                Swal.fire('Error', 'Gagal menyimpan.', 'error');
+            }
+        });
+
+        async function deleteGaleri(id) {
+            const confirm = await Swal.fire({ title: 'Yakin hapus?', icon: 'warning', showCancelButton: true });
+            if (confirm.isConfirmed) {
+                const formData = new FormData();
+                formData.append('id', id);
+                const res = await fetch('/admin/galeri/delete', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    Swal.fire('Terhapus!', '', 'success');
+                    loadGaleri();
+                }
+            }
+        }
+
+        // ==================== DOKUMENTASI ====================
+        async function loadDokumentasi() {
+            const res = await fetch('/admin/dokumentasi');
+            const data = await res.json();
+            let rows = '';
+            data.forEach(item => {
+                rows += `
+                    <tr>
+                        <td>${item.nama_dokumen}</td>
+                        <td>${item.kategori}</td>
+                        <td>${new Date(item.created_at).toLocaleDateString('id-ID')}</td>
+                        <td><a href="/static/upload/dokumentasi/${item.file_path}" class="btn btn-sm btn-primary" download><i class="fa fa-download"></i></a></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editDok(${item.id})"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteDok(${item.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById('dok-table').innerHTML = rows;
+        }
+
+        function openDokModal() {
+            document.getElementById('dok-id').value = '';
+            document.querySelector('#dok-form input[name="nama_dokumen"]').value = '';
+            document.querySelector('#dok-form input[name="kategori"]').value = '';
+            document.querySelector('#dok-form input[name="file_dok"]').value = '';
+            document.getElementById('dokModalLabel').innerText = 'Tambah Dokumen';
+            new bootstrap.Modal(document.getElementById('dokModal')).show();
+        }
+
+        async function editDok(id) {
+            const res = await fetch('/admin/dokumentasi');
+            const list = await res.json();
+            const item = list.find(d => d.id == id);
+            if (!item) return;
+            document.getElementById('dok-id').value = item.id;
+            document.querySelector('#dok-form input[name="nama_dokumen"]').value = item.nama_dokumen;
+            document.querySelector('#dok-form input[name="kategori"]').value = item.kategori;
+            document.querySelector('#dok-form input[name="file_dok"]').value = '';
+            document.getElementById('dokModalLabel').innerText = 'Edit Dokumen';
+            new bootstrap.Modal(document.getElementById('dokModal')).show();
+        }
+
+        document.getElementById('dok-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const id = formData.get('id');
+            const url = id ? '/admin/dokumentasi/update' : '/admin/dokumentasi/add';
+            const res = await fetch(url, { method: 'POST', body: formData });
+            const result = await res.json();
+            if (result.status === 'success') {
+                Swal.fire('Sukses!', 'Dokumen disimpan.', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('dokModal')).hide();
+                loadDokumentasi();
+            } else {
+                Swal.fire('Error', 'Gagal menyimpan.', 'error');
+            }
+        });
+
+        async function deleteDok(id) {
+            const confirm = await Swal.fire({ title: 'Yakin hapus?', icon: 'warning', showCancelButton: true });
+            if (confirm.isConfirmed) {
+                const formData = new FormData();
+                formData.append('id', id);
+                const res = await fetch('/admin/dokumentasi/delete', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    Swal.fire('Terhapus!', '', 'success');
+                    loadDokumentasi();
+                }
+            }
+        }
+
+        // ==================== PENGADUAN ====================
+        async function loadPengaduan() {
+            const res = await fetch('/admin/pengaduan');
+            const data = await res.json();
+            let rows = '';
+            data.forEach(item => {
+                const badge = item.status === 'Menunggu' ? 'bg-warning' : (item.status === 'Diproses' ? 'bg-primary' : 'bg-success');
+                rows += `
+                    <tr>
+                        <td>${item.nama}</td>
+                        <td>${item.judul}</td>
+                        <td><span class="badge ${badge}">${item.status}</span></td>
+                        <td>${new Date(item.created_at).toLocaleDateString('id-ID')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="detailPengaduan(${item.id})"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="hapusPengaduan(${item.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById('pengaduan-table').innerHTML = rows;
+        }
+
+        async function detailPengaduan(id) {
+            const res = await fetch(`/admin/pengaduan/${id}`);
+            const data = await res.json();
+            const content = document.getElementById('pengaduan-detail-content');
+            content.innerHTML = `
+                <p><strong>Nama:</strong> ${data.nama}</p>
+                <p><strong>Email:</strong> ${data.email || '-'}</p>
+                <p><strong>No HP:</strong> ${data.no_hp}</p>
+                <p><strong>Judul:</strong> ${data.judul}</p>
+                <p><strong>Isi:</strong> ${data.isi}</p>
+                ${data.foto ? `<p><img src="/static/upload/pengaduan/${data.foto}" class="img-thumbnail" style="max-width:200px;"></p>` : ''}
+                <hr>
+                <div class="mb-3">
+                    <label><strong>Status:</strong></label>
+                    <select id="edit-status" class="form-select">
+                        <option value="Menunggu" ${data.status==='Menunggu'?'selected':''}>Menunggu</option>
+                        <option value="Diproses" ${data.status==='Diproses'?'selected':''}>Diproses</option>
+                        <option value="Selesai" ${data.status==='Selesai'?'selected':''}>Selesai</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label><strong>Balasan:</strong></label>
+                    <textarea id="edit-balasan" class="form-control" rows="3">${data.balasan || ''}</textarea>
+                </div>
+                <button class="btn btn-primary" onclick="updatePengaduan(${data.id})">Simpan Perubahan</button>
+            `;
+            new bootstrap.Modal(document.getElementById('pengaduanDetailModal')).show();
+        }
+
+        async function updatePengaduan(id) {
+            const status = document.getElementById('edit-status').value;
+            const balasan = document.getElementById('edit-balasan').value;
+            // Update status
+            let formStatus = new FormData();
+            formStatus.append('id', id);
+            formStatus.append('status', status);
+            await fetch('/admin/pengaduan/update-status', { method: 'POST', body: formStatus });
+            // Update balasan
+            let formBalas = new FormData();
+            formBalas.append('id', id);
+            formBalas.append('balasan', balasan);
+            await fetch('/admin/pengaduan/balas', { method: 'POST', body: formBalas });
+            Swal.fire('Sukses!', 'Pengaduan diperbarui.', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('pengaduanDetailModal')).hide();
+            loadPengaduan();
+        }
+
+        async function hapusPengaduan(id) {
+            const confirm = await Swal.fire({ title: 'Yakin hapus pengaduan ini?', icon: 'warning', showCancelButton: true });
+            if (confirm.isConfirmed) {
+                const formData = new FormData();
+                formData.append('id', id);
+                const res = await fetch('/admin/pengaduan/delete', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    Swal.fire('Terhapus!', '', 'success');
+                    loadPengaduan();
+                }
+            }
+        }
+
+        // ==================== ADMIN ====================
+        async function loadAdmin() {
+            const res = await fetch('/admin/admins');
+            const data = await res.json();
+            let rows = '';
+            data.forEach(item => {
+                rows += `
+                    <tr>
+                        <td>${item.username}</td>
+                        <td>${item.nama}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editAdmin(${item.id}, '${item.username}', '${item.nama}')"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAdmin(${item.id})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById('admin-table').innerHTML = rows;
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-id').value = '';
+            document.querySelector('#admin-form input[name="username"]').value = '';
+            document.querySelector('#admin-form input[name="password"]').value = '';
+            document.querySelector('#admin-form input[name="nama"]').value = '';
+            document.getElementById('adminModalLabel').innerText = 'Tambah Admin';
+            new bootstrap.Modal(document.getElementById('adminModal')).show();
+        }
+
+        function editAdmin(id, username, nama) {
+            document.getElementById('admin-id').value = id;
+            document.querySelector('#admin-form input[name="username"]').value = username;
+            document.querySelector('#admin-form input[name="password"]').value = '';
+            document.querySelector('#admin-form input[name="nama"]').value = nama;
+            document.getElementById('adminModalLabel').innerText = 'Edit Admin';
+            new bootstrap.Modal(document.getElementById('adminModal')).show();
+        }
+
+        document.getElementById('admin-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const id = formData.get('id');
+            const url = id ? '/admin/admins/update' : '/admin/admins/add';
+            const res = await fetch(url, { method: 'POST', body: formData });
+            const result = await res.json();
+            if (result.status === 'success') {
+                Swal.fire('Sukses!', 'Data admin disimpan.', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide();
+                loadAdmin();
+            } else {
+                Swal.fire('Error', 'Gagal menyimpan.', 'error');
+            }
+        });
+
+        async function deleteAdmin(id) {
+            const confirm = await Swal.fire({ title: 'Yakin hapus admin?', icon: 'warning', showCancelButton: true });
+            if (confirm.isConfirmed) {
+                const formData = new FormData();
+                formData.append('id', id);
+                const res = await fetch('/admin/admins/delete', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    Swal.fire('Terhapus!', '', 'success');
+                    loadAdmin();
+                }
+            }
+        }
+
+        // Panggil load pertama kali (dashboard)
+        loadDashboard();
+    </script>
+</body>
+</html>
